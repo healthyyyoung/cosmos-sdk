@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"slices"
 	"time"
 
 	"cosmossdk.io/collections"
@@ -189,12 +190,9 @@ func (k Keeper) setConsKeyQueue(ctx context.Context, ts time.Time, valAddr sdk.V
 
 // bytesSliceExists tries to find the duplicate entry the array.
 func bytesSliceExists(sliceList [][]byte, targetBytes []byte) bool {
-	for _, bytesSlice := range sliceList {
-		if bytes.Equal(bytesSlice, targetBytes) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(sliceList, func(slice []byte) bool {
+		return bytes.Equal(slice, targetBytes)
+	})
 }
 
 // PurgeAllMaturedConsKeyRotatedKeys deletes all the matured key rotations.

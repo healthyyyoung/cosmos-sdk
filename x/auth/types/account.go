@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 
 	gogoprotoany "github.com/cosmos/gogoproto/types/any"
@@ -295,13 +296,9 @@ type GenesisAccounts []GenesisAccount
 // Contains returns true if the given address exists in a slice of GenesisAccount
 // objects.
 func (ga GenesisAccounts) Contains(addr sdk.Address) bool {
-	for _, acc := range ga {
-		if acc.GetAddress().Equals(addr) {
-			return true
-		}
-	}
-
-	return false
+	return slices.ContainsFunc(ga, func(acc GenesisAccount) bool {
+		return acc.GetAddress().Equals(addr)
+	})
 }
 
 // GenesisAccount defines a genesis account that embeds an AccountI with validation capabilities.
